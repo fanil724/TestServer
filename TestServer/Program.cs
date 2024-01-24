@@ -134,7 +134,7 @@ class ClientObject
                 {
                     str = await Reader.ReadLineAsync();
                     str = RequestHandler(str);
-                    await Writer.WriteLineAsync(str);
+                    if (str!="") { await Writer.WriteLineAsync(str); }
                 }
                 catch
                 {
@@ -269,7 +269,7 @@ class ClientObject
                             {
                                 db.Users.Update(user);
                             }
-                            db.SaveChanges(); message = "Изменения внесены!";
+                            db.SaveChanges();
                         }
                     }
 
@@ -287,7 +287,7 @@ class ClientObject
                             {
                                 db.Themes.Update(th);
                             }
-                            db.SaveChanges(); message = "Изменения внесены!";
+                            db.SaveChanges();
                         }
                     }
 
@@ -306,7 +306,7 @@ class ClientObject
                                 db.Questions.Update(question);
                             }
                             db.SaveChanges();
-                            message = "Изменения внесены!";
+
                         }
                     }
                     if (request[1] == "Del")// удаление пользователя 
@@ -319,11 +319,8 @@ class ClientObject
                             {
                                 db.Users.Remove(user);
                                 db.SaveChanges();
-                                message = "Пользователь удален!";
                             }
-                            else {
-                                message = "Данный пользователь не найден!";
-                            }
+
                         }
                     }
                 }
