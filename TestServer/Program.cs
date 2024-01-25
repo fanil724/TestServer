@@ -93,11 +93,14 @@ class ClientObject
                 string password = new string(chars);
                 if (password != userLogAndPass[1])
                 {
-                    await Writer.WriteLineAsync("Пароль не верный!"); return;
+                    await Writer.WriteLineAsync("Пароль не верный!");
+                    await Writer.FlushAsync();
+                    return;
                 }
                 else
                 {
                     await Writer.WriteLineAsync("admin");
+                    await Writer.FlushAsync();
                     user.Name = "админ";
                 }
             }
@@ -110,18 +113,23 @@ class ClientObject
 
                 if (user == null)
                 {
-                    await Writer.WriteLineAsync("Пользователь с такой учетной записью не обнаружен"); return;
+                    await Writer.WriteLineAsync("Пользователь с такой учетной записью не обнаружен");
+                    await Writer.FlushAsync();
+                    return;
                 }
                 else
                 {
                     if (user.Password != userLogAndPass[1])
                     {
-                        await Writer.WriteLineAsync("Пароль не правильный"); return;
+                        await Writer.WriteLineAsync("Пароль не правильный");
+                        await Writer.FlushAsync();
+                        return;
                     }
                     else
                     {
                         string jsonUser = JsonSerializer.Serialize(user);
                         await Writer.WriteLineAsync(jsonUser);
+                        await Writer.FlushAsync();
                     }
                 }
             }
@@ -134,7 +142,11 @@ class ClientObject
                 {
                     str = await Reader.ReadLineAsync();
                     str = RequestHandler(str);
-                    if (str!="") { await Writer.WriteLineAsync(str); }
+                    if (str != "")
+                    {
+                        await Writer.WriteLineAsync(str);
+                        await Writer.FlushAsync();
+                    }
                 }
                 catch
                 {
