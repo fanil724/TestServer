@@ -72,7 +72,7 @@ class ClientObject
     public async Task ProcessAsync()
     {
         User? user = new User();
-        string? str;
+        string str;
         try
         {
 
@@ -140,11 +140,12 @@ class ClientObject
             {
                 try
                 {
-                    str = await Reader.ReadLineAsync();
-                    str = RequestHandler(str);
-                    if (str != "")
+                    var requestatring = await Reader.ReadLineAsync();
+                    var answerstring = RequestHandler(requestatring);
+                    if (answerstring != "")
                     {
-                        await Writer.WriteLineAsync(str);
+                        Console.WriteLine(answerstring);
+                        await Writer.WriteLineAsync(answerstring);
                         await Writer.FlushAsync();
                     }
                 }
@@ -219,8 +220,7 @@ class ClientObject
                             }
                             else
                             {
-
-                                statisticlist = db.ScoreTables.ToList();
+                                statisticlist = db.ScoreTables.Include(x => x.User).Include(x => x.Theme).ToList();
                             }
                             message = JsonSerializer.Serialize(statisticlist);
                         }
@@ -308,14 +308,14 @@ class ClientObject
                         Question? question = JsonSerializer.Deserialize<Question>(request[2]);
                         using (ApplicationContext db = new ApplicationContext())
                         {
-                            var us = db.Questions.FirstOrDefault(x => x.Id == question.Id);
-                            if (us == null)
+                            var ques = db.Questions.FirstOrDefault(x => x.Id == question.Id);
+                            if (ques == null)
                             {
                                 db.Questions.Add(question);
                             }
                             else
                             {
-                                db.Questions.Update(question);
+                                db.Questions.Update(ques);
                             }
                             db.SaveChanges();
 
@@ -323,16 +323,28 @@ class ClientObject
                     }
                     if (request[1] == "Del")// удаление пользователя 
                     {
-                        User? user = JsonSerializer.Deserialize<User>(request[2]);
                         using (ApplicationContext db = new ApplicationContext())
                         {
-                            var us = db.Users.FirstOrDefault(x => x.Id == user.Id);
+                            var us = db.Users.FirstOrDefault(x => x.Id == Int32.Parse(request[2]));
                             if (us != null)
                             {
-                                db.Users.Remove(user);
+                                db.Users.Remove(us);
                                 db.SaveChanges();
                             }
 
+                        }
+                    }
+                    if (request[1] == "DelQuestion")// Удаление вопроса 
+                    {
+                        Question? question = JsonSerializer.Deserialize<Question>(request[2]);
+                        using (ApplicationContext db = new ApplicationContext())
+                        {
+                            var ques = db.Questions.FirstOrDefault(x => x.Id == Int32.Parse(request[2]));
+                            if (ques == null)
+                            {
+                                db.Questions.Remove(ques);
+                                db.SaveChanges();
+                            }
                         }
                     }
                 }
