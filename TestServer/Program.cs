@@ -279,7 +279,8 @@ class ClientObject
                             }
                             else
                             {
-                                db.Users.Update(user);
+                                us = user;
+                                db.Users.Update(us);
                             }
                             db.SaveChanges();
                         }
