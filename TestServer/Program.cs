@@ -216,7 +216,7 @@ class ClientObject
                             List<ScoreTable> statisticlist;
                             if (request.Length == 3)
                             {
-                                statisticlist = db.ScoreTables.Include(x => x.User).Where(x => x.UserId == Int32.Parse(request[2])).ToList();
+                                statisticlist = db.ScoreTables.Include(x => x.User).Include(x => x.Theme).Where(x => x.UserId == Int32.Parse(request[2])).ToList();
                             }
                             else
                             {
